@@ -1,8 +1,8 @@
 /**
- * SKILL ACADEMY - Cozy Classroom Learning Game
- * =============================================
+ * SKILL ACADEMY v2 - Cozy Classroom Learning Game
+ * ================================================
  * Learn Claude Agent Skills in a warm study room!
- * Now with PRACTICAL CHALLENGES!
+ * Now with Mario-style menu!
  */
 
 const CONFIG = {
@@ -262,6 +262,7 @@ class BootScene extends Phaser.Scene {
         this.genQuestionMark();
         this.genCheckmark();
         this.genStar();
+        this.genMenuIcons();
     }
 
     fillGradient(g, x, y, w, h, colorTop, colorBot) {
@@ -695,101 +696,344 @@ class BootScene extends Phaser.Scene {
         g.generateTexture('star', 32, 32);
         g.destroy();
     }
+
+    genMenuIcons() {
+        // Book icon
+        let g = this.make.graphics({add:false});
+        g.fillStyle(0xc44536);
+        g.fillRoundedRect(8, 4, 32, 40, 3);
+        g.fillStyle(0xf5e6d3);
+        g.fillRect(12, 6, 24, 36);
+        g.fillStyle(0x8b4513);
+        g.fillRect(10, 4, 4, 40);
+        g.fillStyle(0x333333, 0.5);
+        g.fillRect(16, 12, 16, 2);
+        g.fillRect(16, 18, 14, 2);
+        g.fillRect(16, 24, 12, 2);
+        g.generateTexture('icon_book', 48, 48);
+        g.destroy();
+
+        // Lightbulb icon
+        g = this.make.graphics({add:false});
+        g.fillStyle(0xffd700);
+        g.fillCircle(24, 18, 14);
+        g.fillStyle(0xffea00);
+        g.fillCircle(24, 16, 10);
+        g.fillStyle(0xffd700);
+        g.fillRoundedRect(18, 28, 12, 8, 2);
+        g.fillStyle(0x808080);
+        g.fillRoundedRect(20, 36, 8, 6, 2);
+        g.fillStyle(0xffffff, 0.5);
+        g.fillCircle(20, 14, 4);
+        g.generateTexture('icon_bulb', 48, 48);
+        g.destroy();
+
+        // Quiz/checklist icon
+        g = this.make.graphics({add:false});
+        g.fillStyle(0xf5e6d3);
+        g.fillRoundedRect(8, 2, 32, 44, 4);
+        g.lineStyle(2, 0x8b4513);
+        g.strokeRoundedRect(8, 2, 32, 44, 4);
+        g.fillStyle(0x4a7c59);
+        g.fillRect(14, 10, 8, 8);
+        g.fillRect(14, 24, 8, 8);
+        g.fillRect(14, 38, 8, 4);
+        g.fillStyle(0x333333);
+        g.fillRect(26, 12, 10, 3);
+        g.fillRect(26, 26, 10, 3);
+        g.fillRect(26, 40, 6, 2);
+        g.generateTexture('icon_quiz', 48, 48);
+        g.destroy();
+
+        // Trophy icon
+        g = this.make.graphics({add:false});
+        g.fillStyle(0xffd700);
+        g.fillRoundedRect(12, 6, 24, 22, 4);
+        g.fillStyle(0xffea00);
+        g.fillRoundedRect(16, 10, 16, 14, 2);
+        g.fillStyle(0xffd700);
+        g.fillRoundedRect(20, 28, 8, 6, 1);
+        g.fillRoundedRect(14, 34, 20, 6, 2);
+        // Handles
+        g.lineStyle(4, 0xffd700);
+        g.beginPath();
+        g.arc(10, 16, 6, Math.PI/2, Math.PI * 1.5, false);
+        g.strokePath();
+        g.beginPath();
+        g.arc(38, 16, 6, -Math.PI/2, Math.PI/2, false);
+        g.strokePath();
+        g.fillStyle(0xffffff, 0.3);
+        g.fillCircle(20, 14, 4);
+        g.generateTexture('icon_trophy', 48, 48);
+        g.destroy();
+    }
 }
 
 // ============================================================================
-// MENU SCENE - Simple Title Screen
+// MENU SCENE v2 - Journey/Gris Inspired (Elegant, Living Scene)
 // ============================================================================
 class MenuScene extends Phaser.Scene {
     constructor() { super('Menu'); }
 
     create() {
         const W = CONFIG.WIDTH, H = CONFIG.HEIGHT;
+        this.time0 = 0;
 
-        // Warm background
-        this.add.rectangle(W/2, H/2, W, H, 0x2c1810);
+        // Warm sunset gradient - like Journey's desert
+        for (let i = 0; i < H; i++) {
+            const t = i / H;
+            let r, g, b;
+            if (t < 0.4) {
+                // Top - deep warm sky
+                r = Math.floor(45 + t * 80);
+                g = Math.floor(25 + t * 50);
+                b = Math.floor(50 + t * 30);
+            } else if (t < 0.7) {
+                // Middle - golden horizon glow
+                const mt = (t - 0.4) / 0.3;
+                r = Math.floor(77 + mt * 120);
+                g = Math.floor(45 + mt * 80);
+                b = Math.floor(62 - mt * 20);
+            } else {
+                // Bottom - warm earth
+                const bt = (t - 0.7) / 0.3;
+                r = Math.floor(197 - bt * 60);
+                g = Math.floor(125 - bt * 50);
+                b = Math.floor(42 - bt * 20);
+            }
+            this.add.rectangle(W/2, i, W, 1, Phaser.Display.Color.GetColor(r, g, b));
+        }
 
-        // Decorative top bar
-        this.add.rectangle(W/2, 20, W, 40, 0x4a2c20);
-        this.add.rectangle(W/2, 40, W, 3, 0xffd700);
+        // Distant sun/moon glow on horizon
+        const sunGlow = this.add.graphics();
+        for (let i = 5; i > 0; i--) {
+            sunGlow.fillStyle(0xffecd2, 0.03 * i);
+            sunGlow.fillCircle(W * 0.7, H * 0.52, 40 + i * 25);
+        }
+        sunGlow.fillStyle(0xfff5e6, 0.6);
+        sunGlow.fillCircle(W * 0.7, H * 0.52, 35);
+        sunGlow.fillStyle(0xffffff, 0.8);
+        sunGlow.fillCircle(W * 0.7, H * 0.52, 20);
 
-        // Title
-        this.add.text(W/2 + 2, 90, 'SKILL ACADEMY', {
-            fontFamily: '"Press Start 2P"', fontSize: '32px', color: '#1a0a00'
-        }).setOrigin(0.5).setAlpha(0.4);
+        // Drifting clouds (very subtle, slow)
+        this.clouds = [];
+        for (let i = 0; i < 4; i++) {
+            const cloud = this.add.graphics();
+            cloud.fillStyle(0xffecd2, 0.08);
+            const cx = Phaser.Math.Between(-100, W + 100);
+            const cy = H * 0.2 + i * 40;
+            cloud.fillEllipse(0, 0, Phaser.Math.Between(80, 150), Phaser.Math.Between(15, 30));
+            cloud.x = cx;
+            cloud.y = cy;
+            cloud.speed = 0.05 + i * 0.02;
+            this.clouds.push(cloud);
+        }
 
-        this.add.text(W/2, 88, 'SKILL ACADEMY', {
-            fontFamily: '"Press Start 2P"', fontSize: '32px', color: '#ffd700'
-        }).setOrigin(0.5);
+        // Far hills silhouette
+        this.drawHills(H * 0.58, 0x8b5a3c, 0.25);
+        // Mid hills
+        this.drawHills(H * 0.68, 0x6b4530, 0.4);
+        // Near hills
+        this.drawHills(H * 0.78, 0x4a3020, 0.6);
 
-        // Subtitle
-        this.add.text(W/2, 130, 'Master Claude Agent Skills', {
-            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#c49464'
-        }).setOrigin(0.5);
+        // Ground plane
+        const ground = this.add.graphics();
+        ground.fillStyle(0x2d1f18);
+        ground.fillRect(0, H * 0.82, W, H * 0.2);
 
-        // Decorative line
-        this.add.rectangle(W/2, 155, 250, 2, 0x8b6914);
+        // Small player figure in the scene (like Journey's robed figure)
+        const player = this.add.image(W * 0.35, H * 0.79, 'player_down');
+        player.setScale(1.2).setTint(0x3d2820);
 
-        // Instructions box
-        const box = this.add.graphics();
-        box.fillStyle(0x3d2a1a, 0.9);
-        box.fillRoundedRect(W/2 - 200, 175, 400, 140, 8);
-        box.lineStyle(2, 0x8b6914);
-        box.strokeRoundedRect(W/2 - 200, 175, 400, 140, 8);
-
-        this.add.text(W/2, 195, 'HOW TO PLAY', {
-            fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ffd700'
-        }).setOrigin(0.5);
-
-        const instructions = [
-            '1. Explore the classroom',
-            '2. Learn at each station (dialogues)',
-            '3. Take the quiz after learning',
-            '4. Complete all 4 stations to graduate!'
-        ];
-        instructions.forEach((txt, i) => {
-            this.add.text(W/2, 225 + i * 22, txt, {
-                fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#c49464'
-            }).setOrigin(0.5);
+        // Gentle idle animation
+        this.tweens.add({
+            targets: player,
+            y: H * 0.79 - 2,
+            duration: 2000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
         });
 
-        // Bottom bar
-        this.add.rectangle(W/2, H - 60, W, 2, 0x8b6914);
+        // Floating light particles (like Journey's glowing cloth pieces)
+        for (let i = 0; i < 12; i++) {
+            const delay = i * 400;
+            this.time.delayedCall(delay, () => this.spawnLight());
+        }
 
-        // Start prompt
-        const prompt = this.add.text(W/2, H - 35, 'PRESS SPACE TO START', {
-            fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ffd700'
-        }).setOrigin(0.5);
+        // Title that fades in elegantly
+        const titleY = H * 0.25;
+
+        const title = this.add.text(W/2, titleY, 'SKILL ACADEMY', {
+            fontFamily: '"Press Start 2P"', fontSize: '28px', color: '#ffecd2'
+        }).setOrigin(0.5).setAlpha(0);
+
+        // Elegant fade in
+        this.tweens.add({
+            targets: title,
+            alpha: 1,
+            y: titleY - 5,
+            duration: 2000,
+            delay: 500,
+            ease: 'Cubic.easeOut'
+        });
+
+        // Subtle breathing
+        this.tweens.add({
+            targets: title,
+            alpha: 0.85,
+            duration: 3000,
+            delay: 2500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        // Simple prompt - appears after title
+        const prompt = this.add.text(W/2, H * 0.92, 'press space', {
+            fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#8b7560'
+        }).setOrigin(0.5).setAlpha(0);
 
         this.tweens.add({
             targets: prompt,
-            alpha: 0.3,
-            duration: 500,
-            yoyo: true,
-            repeat: -1
+            alpha: 0.7,
+            duration: 1000,
+            delay: 2000,
+            ease: 'Cubic.easeOut'
         });
 
-        // Controls hint
-        this.add.text(W/2, H - 12, 'Move: ARROWS/WASD | Interact: SPACE', {
-            fontFamily: '"Press Start 2P"', fontSize: '7px', color: '#6b5344'
-        }).setOrigin(0.5);
+        // Gentle pulse on prompt
+        this.tweens.add({
+            targets: prompt,
+            alpha: 0.3,
+            duration: 1500,
+            delay: 3000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
 
-        // Input
+        // Input - just space to begin
         this.input.keyboard.once('keydown-SPACE', () => this.startGame());
         this.input.keyboard.once('keydown-ENTER', () => this.startGame());
 
-        this.cameras.main.fadeIn(400);
+        this.cameras.main.fadeIn(1500);
+    }
+
+    drawHills(baseY, color, alpha) {
+        const W = CONFIG.WIDTH, H = CONFIG.HEIGHT;
+        const g = this.add.graphics();
+        g.fillStyle(color, alpha);
+        g.beginPath();
+        g.moveTo(0, H);
+
+        // Smooth rolling hills using bezier-like curves
+        let x = 0;
+        const segments = 6;
+        const segWidth = W / segments;
+
+        for (let i = 0; i <= segments; i++) {
+            const hillHeight = 20 + Math.sin(i * 1.5) * 30 + Math.random() * 20;
+            const y = baseY - hillHeight;
+
+            if (i === 0) {
+                g.lineTo(x, y);
+            } else {
+                // Smooth curve to next point
+                const prevX = (i - 1) * segWidth;
+                const cpX = prevX + segWidth / 2;
+                g.lineTo(x, y);
+            }
+            x += segWidth;
+        }
+
+        g.lineTo(W, H);
+        g.closePath();
+        g.fillPath();
+    }
+
+    spawnLight() {
+        const W = CONFIG.WIDTH, H = CONFIG.HEIGHT;
+
+        // Create glowing particle
+        const light = this.add.graphics();
+        const size = Phaser.Math.Between(2, 4);
+
+        // Soft glow effect
+        light.fillStyle(0xffecd2, 0.15);
+        light.fillCircle(0, 0, size * 3);
+        light.fillStyle(0xffecd2, 0.4);
+        light.fillCircle(0, 0, size * 1.5);
+        light.fillStyle(0xffffff, 0.8);
+        light.fillCircle(0, 0, size * 0.5);
+
+        light.x = Phaser.Math.Between(W * 0.2, W * 0.8);
+        light.y = H * 0.85;
+        light.setAlpha(0);
+
+        // Rise and drift
+        const targetX = light.x + Phaser.Math.Between(-100, 100);
+        const targetY = Phaser.Math.Between(H * 0.2, H * 0.5);
+        const duration = Phaser.Math.Between(6000, 10000);
+
+        this.tweens.add({
+            targets: light,
+            x: targetX,
+            y: targetY,
+            alpha: { from: 0, to: 0.8 },
+            duration: duration * 0.3,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                this.tweens.add({
+                    targets: light,
+                    y: targetY - 50,
+                    alpha: 0,
+                    duration: duration * 0.7,
+                    ease: 'Cubic.easeIn',
+                    onComplete: () => {
+                        light.destroy();
+                        this.spawnLight();
+                    }
+                });
+            }
+        });
+    }
+
+    update(time) {
+        // Drift clouds slowly
+        if (this.clouds) {
+            this.clouds.forEach(cloud => {
+                cloud.x += cloud.speed;
+                if (cloud.x > CONFIG.WIDTH + 150) {
+                    cloud.x = -150;
+                }
+            });
+        }
     }
 
     startGame() {
-        this.cameras.main.fadeOut(300);
-        this.time.delayedCall(300, () => this.scene.start('Game'));
+        // Elegant white flash transition
+        const flash = this.add.rectangle(
+            CONFIG.WIDTH/2, CONFIG.HEIGHT/2,
+            CONFIG.WIDTH, CONFIG.HEIGHT,
+            0xffecd2, 0
+        ).setDepth(100);
+
+        this.tweens.add({
+            targets: flash,
+            alpha: 1,
+            duration: 800,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                this.scene.start('Game');
+            }
+        });
     }
 }
 
 
 // ============================================================================
-// GAME SCENE
+// GAME SCENE (same as v1)
 // ============================================================================
 class GameScene extends Phaser.Scene {
     constructor() { super('Game'); }
@@ -799,7 +1043,6 @@ class GameScene extends Phaser.Scene {
         this.currentStation = null;
         this.dialogueIndex = 0;
 
-        // Unified mode state - Learn then Quiz at each station
         this.challengeActive = false;
         this.currentChallenge = null;
         this.questionIndex = 0;
@@ -807,7 +1050,6 @@ class GameScene extends Phaser.Scene {
         this.score = 0;
         this.totalQuestions = 0;
 
-        // Track both learning and quiz completion per station
         this.stationProgress = {
             whiteboard: { learned: false, quizzed: false },
             bookshelf: { learned: false, quizzed: false },
@@ -851,7 +1093,6 @@ class GameScene extends Phaser.Scene {
 
         this.add.image(9*T, 0, 'window').setOrigin(0);
 
-        // Whiteboard
         const whiteboard = this.add.image(2*T, T/2, 'whiteboard').setOrigin(0);
         this.stations.push({
             sprite: whiteboard,
@@ -871,7 +1112,6 @@ class GameScene extends Phaser.Scene {
             ]
         });
 
-        // Bookshelf
         const bookshelf = this.add.image(17*T, 3*T, 'bookshelf').setOrigin(0);
         this.stations.push({
             sprite: bookshelf,
@@ -889,7 +1129,6 @@ class GameScene extends Phaser.Scene {
             ]
         });
 
-        // Computer
         const computer = this.add.image(13*T, 5*T, 'computer').setOrigin(0);
         this.stations.push({
             sprite: computer,
@@ -908,7 +1147,6 @@ class GameScene extends Phaser.Scene {
             ]
         });
 
-        // Desk
         const desk = this.add.image(T, 9*T, 'desk').setOrigin(0);
         this.add.image(2*T, 11*T, 'chair').setOrigin(0);
         this.stations.push({
@@ -928,11 +1166,9 @@ class GameScene extends Phaser.Scene {
             ]
         });
 
-        // Decorative
         this.add.image(16*T, 10*T, 'plant').setOrigin(0);
         this.add.image(T, 5*T, 'lamp').setOrigin(0);
 
-        // Teacher
         this.teacher = this.add.image(8*T, 5*T, 'teacher_down').setOrigin(0).setDepth(8);
         this.teacherMarker = this.add.image(8*T + 16, 4*T - 8, 'question_mark').setDepth(9);
         this.tweens.add({
@@ -948,7 +1184,6 @@ class GameScene extends Phaser.Scene {
             dialogues: this.getTeacherDialogues()
         });
 
-        // Station completion markers
         this.stationMarkers = {};
         ['whiteboard', 'bookshelf', 'computer', 'desk'].forEach(key => {
             const station = this.stations.find(s => s.challengeKey === key);
@@ -962,7 +1197,6 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Highlights
         this.highlights = [];
         this.stations.forEach(station => {
             for (let dx = 0; dx < station.width; dx++) {
@@ -1011,7 +1245,6 @@ class GameScene extends Phaser.Scene {
     createUI() {
         const W = CONFIG.WIDTH, H = CONFIG.HEIGHT, C = CONFIG.COLORS;
 
-        // Dialogue box
         this.dialogueContainer = this.add.container(0, 0).setDepth(100).setVisible(false);
 
         const bg = this.add.graphics();
@@ -1053,7 +1286,6 @@ class GameScene extends Phaser.Scene {
             duration: 300, yoyo: true, repeat: -1
         });
 
-        // Notification
         this.notification = this.add.container(W/2, -40).setDepth(100);
         const notifBg = this.add.graphics();
         notifBg.fillStyle(C.UI_BORDER);
@@ -1067,18 +1299,15 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.notification.add(this.notifText);
 
-        // Progress display
         this.scoreText = this.add.text(W-10, 10, '', {
-            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd700'
-        }).setOrigin(1, 0).setDepth(50);
+            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffcc00'
+        }).setOrigin(1, 0).setDepth(50).setStroke('#000000', 2);
         this.updateProgressDisplay();
 
-        // Title
         this.add.text(10, 10, 'SKILL ACADEMY', {
             fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#c49464'
         }).setDepth(50);
 
-        // Controls
         this.add.text(W/2, H-8, 'ARROWS: Move  SPACE: Interact  ESC: Back/Close', {
             fontFamily: '"Press Start 2P"', fontSize: '7px', color: '#8b7355'
         }).setOrigin(0.5);
@@ -1087,14 +1316,11 @@ class GameScene extends Phaser.Scene {
     createChallengeUI() {
         const W = CONFIG.WIDTH, H = CONFIG.HEIGHT, C = CONFIG.COLORS;
 
-        // Challenge container
         this.challengeContainer = this.add.container(0, 0).setDepth(150).setVisible(false);
 
-        // Dark overlay
         const overlay = this.add.rectangle(W/2, H/2, W, H, 0x000000, 0.7);
         this.challengeContainer.add(overlay);
 
-        // Main challenge box
         const challengeBg = this.add.graphics();
         challengeBg.fillStyle(C.UI_BG);
         challengeBg.fillRoundedRect(40, 40, W-80, H-80, 16);
@@ -1102,20 +1328,17 @@ class GameScene extends Phaser.Scene {
         challengeBg.strokeRoundedRect(40, 40, W-80, H-80, 16);
         this.challengeContainer.add(challengeBg);
 
-        // Challenge title
         this.challengeTitle = this.add.text(W/2, 70, '', {
             fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#2c1810'
         }).setOrigin(0.5);
         this.challengeContainer.add(this.challengeTitle);
 
-        // Question text
         this.questionText = this.add.text(W/2, 130, '', {
             fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#2c1810',
             wordWrap: {width: W-120}, align: 'center', lineSpacing: 6
         }).setOrigin(0.5, 0);
         this.challengeContainer.add(this.questionText);
 
-        // Options
         this.optionTexts = [];
         this.optionBgs = [];
         for (let i = 0; i < 4; i++) {
@@ -1132,19 +1355,16 @@ class GameScene extends Phaser.Scene {
             this.challengeContainer.add(optText);
         }
 
-        // Progress indicator
         this.progressText = this.add.text(W/2, H-60, '', {
             fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#8b7355'
         }).setOrigin(0.5);
         this.challengeContainer.add(this.progressText);
 
-        // Hint text
         this.hintText = this.add.text(W/2, H-80, 'Use UP/DOWN to select, SPACE to confirm', {
             fontFamily: '"Press Start 2P"', fontSize: '7px', color: '#8b7355'
         }).setOrigin(0.5);
         this.challengeContainer.add(this.hintText);
 
-        // Feedback container
         this.feedbackContainer = this.add.container(0, 0).setDepth(160).setVisible(false);
         const feedbackOverlay = this.add.rectangle(W/2, H/2, W, H, 0x000000, 0.8);
         this.feedbackContainer.add(feedbackOverlay);
@@ -1195,7 +1415,6 @@ class GameScene extends Phaser.Scene {
     }
 
     update() {
-        // Feedback screen input - only if challenge is active
         if (this.feedbackContainer && this.feedbackContainer.visible && this.currentChallenge) {
             if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
                 this.feedbackContainer.setVisible(false);
@@ -1209,9 +1428,7 @@ class GameScene extends Phaser.Scene {
             return;
         }
 
-        // Challenge screen input
         if (this.challengeActive && this.challengeContainer && this.challengeContainer.visible) {
-            // Handle intro screen - SPACE starts the quiz
             if (this.showingIntro) {
                 if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
                     this.showingIntro = false;
@@ -1223,7 +1440,6 @@ class GameScene extends Phaser.Scene {
                 return;
             }
 
-            // Handle question screen
             if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.wasd.W)) {
                 this.selectedOption = Math.max(0, this.selectedOption - 1);
                 this.updateOptionHighlights();
@@ -1238,7 +1454,6 @@ class GameScene extends Phaser.Scene {
             if (Phaser.Input.Keyboard.JustDown(this.escKey)) {
                 this.closeChallenge();
             }
-            // Number keys for quick selection
             if (Phaser.Input.Keyboard.JustDown(this.oneKey)) { this.selectedOption = 0; this.submitAnswer(); }
             if (Phaser.Input.Keyboard.JustDown(this.twoKey)) { this.selectedOption = 1; this.submitAnswer(); }
             if (Phaser.Input.Keyboard.JustDown(this.threeKey)) { this.selectedOption = 2; this.submitAnswer(); }
@@ -1326,7 +1541,6 @@ class GameScene extends Phaser.Scene {
             const inRange = px >= station.x - 1 && px <= station.x + station.width &&
                            py >= station.y - 1 && py <= station.y + 1;
             if (inRange) {
-                // Teacher has no challenge key - just show dialogues
                 if (station.isTeacher || !station.challengeKey) {
                     this.showDialogue(station);
                     return;
@@ -1334,19 +1548,16 @@ class GameScene extends Phaser.Scene {
 
                 const progress = this.stationProgress[station.challengeKey];
 
-                // Already fully completed
                 if (progress.learned && progress.quizzed) {
                     this.showNotification(`${station.name} complete! Check other stations.`);
                     return;
                 }
 
-                // Haven't learned yet - show dialogues first
                 if (!progress.learned) {
                     this.showDialogue(station);
                     return;
                 }
 
-                // Learned but not quizzed - start quiz
                 if (progress.learned && !progress.quizzed) {
                     this.startChallenge(station.challengeKey, station.name);
                     return;
@@ -1357,7 +1568,6 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    // Dialogue methods
     showDialogue(station) {
         this.dialogueActive = true;
         this.currentStation = station;
@@ -1401,7 +1611,6 @@ class GameScene extends Phaser.Scene {
                 this.currentStation = null;
                 this.input.keyboard.resetKeys();
 
-                // Mark station as learned and auto-start quiz (if it has one)
                 if (station && station.challengeKey && !station.isTeacher) {
                     const progress = this.stationProgress[station.challengeKey];
                     if (!progress.learned) {
@@ -1416,10 +1625,9 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    // Challenge methods
     startChallenge(key, stationName) {
         this.challengeActive = true;
-        this.showingIntro = true; // Flag to prevent immediate answer submission
+        this.showingIntro = true;
         this.currentChallenge = CHALLENGES[key];
         this.currentChallengeKey = key;
         this.questionIndex = 0;
@@ -1429,7 +1637,6 @@ class GameScene extends Phaser.Scene {
         this.challengeTitle.setText(this.currentChallenge.name);
         this.challengeContainer.setVisible(true);
 
-        // Show intro then first question
         this.questionText.setText(this.currentChallenge.intro);
         this.optionTexts.forEach(t => t.setText(''));
         this.optionBgs.forEach(bg => bg.clear());
@@ -1440,6 +1647,8 @@ class GameScene extends Phaser.Scene {
     showQuestion() {
         const W = CONFIG.WIDTH;
         const q = this.currentChallenge.questions[this.questionIndex];
+
+        this.challengeContainer.setVisible(true);
 
         this.questionText.setText(q.question);
         this.progressText.setText(`Question ${this.questionIndex + 1} of ${this.currentChallenge.questions.length}`);
@@ -1497,11 +1706,9 @@ class GameScene extends Phaser.Scene {
         const score = this.challengeScore;
         const percent = Math.round((score / total) * 100);
 
-        // Mark station as quizzed
         this.stationProgress[this.currentChallengeKey].quizzed = true;
         this.stationScores[this.currentChallengeKey] = score;
 
-        // Show completion marker
         if (this.stationMarkers[this.currentChallengeKey]) {
             this.stationMarkers[this.currentChallengeKey].setVisible(true);
             this.tweens.add({
@@ -1524,20 +1731,17 @@ class GameScene extends Phaser.Scene {
         this.showNotification(message);
         this.updateProgressDisplay();
 
-        // Check if all stations complete (learned + quizzed)
         const allComplete = Object.values(this.stationProgress).every(s => s.learned && s.quizzed);
         if (allComplete) {
             this.time.delayedCall(2000, () => this.showGraduation());
         }
 
-        // Reset all challenge state
         this.challengeActive = false;
         this.showingIntro = false;
         this.challengeContainer.setVisible(false);
         this.feedbackContainer.setVisible(false);
         this.currentChallenge = null;
 
-        // Reset keyboard and add small delay before movement allowed
         this.input.keyboard.resetKeys();
         this.player.isMoving = true;
         this.time.delayedCall(300, () => {
@@ -1557,44 +1761,102 @@ class GameScene extends Phaser.Scene {
     showGraduation() {
         const W = CONFIG.WIDTH, H = CONFIG.HEIGHT;
 
-        // Calculate total score
         const totalScore = Object.values(this.stationScores).reduce((a, b) => a + b, 0);
         const maxScore = Object.values(CHALLENGES).reduce((a, c) => a + c.questions.length, 0);
         const percent = Math.round((totalScore / maxScore) * 100);
 
-        // Create graduation screen
         const gradContainer = this.add.container(0, 0).setDepth(200);
 
-        const overlay = this.add.rectangle(W/2, H/2, W, H, 0x2c1810, 0.95);
+        const overlay = this.add.rectangle(W/2, H/2, W, H, 0x1a0f0a, 0.97);
         gradContainer.add(overlay);
 
-        // Stars animation
-        for (let i = 0; i < 5; i++) {
-            const star = this.add.image(W/2 - 100 + i * 50, 80, 'star').setScale(0);
+        for (let i = 0; i < 20; i++) {
+            const x = Phaser.Math.Between(50, W - 50);
+            const y = Phaser.Math.Between(50, H - 50);
+            const star = this.add.image(x, y, 'star').setScale(0).setAlpha(0.6);
             gradContainer.add(star);
             this.tweens.add({
                 targets: star,
-                scale: 1,
+                scale: Phaser.Math.FloatBetween(0.3, 0.7),
                 angle: 360,
-                duration: 500,
-                delay: i * 100,
+                duration: 800,
+                delay: i * 50,
+                ease: 'Back.easeOut'
+            });
+            this.tweens.add({
+                targets: star,
+                alpha: 0.2,
+                duration: 1000,
+                delay: 1000 + i * 50,
+                yoyo: true,
+                repeat: -1
+            });
+        }
+
+        for (let i = 0; i < 5; i++) {
+            const star = this.add.image(W/2 - 100 + i * 50, 55, 'star').setScale(0);
+            gradContainer.add(star);
+            this.tweens.add({
+                targets: star,
+                scale: 1.2,
+                angle: 360,
+                duration: 600,
+                delay: 300 + i * 120,
                 ease: 'Back.easeOut'
             });
         }
 
-        const title = this.add.text(W/2, 140, 'CONGRATULATIONS!', {
-            fontFamily: '"Press Start 2P"', fontSize: '20px', color: '#ffd700'
-        }).setOrigin(0.5);
+        const titleShadow = this.add.text(W/2 + 3, 103, 'CONGRATULATIONS!', {
+            fontFamily: '"Press Start 2P"', fontSize: '22px', color: '#000000'
+        }).setOrigin(0.5).setAlpha(0.5);
+        gradContainer.add(titleShadow);
+
+        const title = this.add.text(W/2, 100, 'CONGRATULATIONS!', {
+            fontFamily: '"Press Start 2P"', fontSize: '22px', color: '#ffd700'
+        }).setOrigin(0.5).setScale(0);
         gradContainer.add(title);
 
-        const subtitle = this.add.text(W/2, 180, 'You completed Skill Academy!', {
-            fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#f5e6d3'
-        }).setOrigin(0.5);
+        this.tweens.add({
+            targets: [title, titleShadow],
+            scale: 1,
+            duration: 500,
+            delay: 800,
+            ease: 'Back.easeOut'
+        });
+
+        const tagline = this.add.text(W/2, 135, "You're statistically significant!", {
+            fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#4a7c59'
+        }).setOrigin(0.5).setAlpha(0);
+        gradContainer.add(tagline);
+
+        this.tweens.add({
+            targets: tagline,
+            alpha: 1,
+            duration: 400,
+            delay: 1300
+        });
+
+        const subtitle = this.add.text(W/2, 165, 'You completed Skill Academy!', {
+            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#f5e6d3'
+        }).setOrigin(0.5).setAlpha(0);
         gradContainer.add(subtitle);
 
-        // Score breakdown
-        const breakdown = this.add.text(W/2, 230, 'Your Results:', {
-            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#c49464'
+        this.tweens.add({
+            targets: subtitle,
+            alpha: 1,
+            duration: 400,
+            delay: 1500
+        });
+
+        const scoreBox = this.add.graphics();
+        scoreBox.fillStyle(0x2c1810, 0.8);
+        scoreBox.fillRoundedRect(W/2 - 140, 190, 280, 145, 10);
+        scoreBox.lineStyle(2, 0xffd700, 0.5);
+        scoreBox.strokeRoundedRect(W/2 - 140, 190, 280, 145, 10);
+        gradContainer.add(scoreBox);
+
+        const breakdown = this.add.text(W/2, 210, 'Your Results', {
+            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd700'
         }).setOrigin(0.5);
         gradContainer.add(breakdown);
 
@@ -1605,42 +1867,67 @@ class GameScene extends Phaser.Scene {
             desk: 'Study Desk'
         };
 
-        let y = 260;
+        let y = 235;
         for (const [key, score] of Object.entries(this.stationScores)) {
             const max = CHALLENGES[key].questions.length;
             const text = this.add.text(W/2, y, `${stationNames[key]}: ${score}/${max}`, {
-                fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#f5e6d3'
+                fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#c49464'
             }).setOrigin(0.5);
             gradContainer.add(text);
-            y += 25;
+            y += 20;
         }
 
-        const totalText = this.add.text(W/2, y + 10, `TOTAL: ${totalScore}/${maxScore} (${percent}%)`, {
-            fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ffd700'
+        const totalText = this.add.text(W/2, y + 8, `TOTAL: ${totalScore}/${maxScore} (${percent}%)`, {
+            fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd700'
         }).setOrigin(0.5);
         gradContainer.add(totalText);
 
-        // Grade
         let grade = 'F';
-        if (percent >= 90) grade = 'A+';
-        else if (percent >= 80) grade = 'A';
-        else if (percent >= 70) grade = 'B';
-        else if (percent >= 60) grade = 'C';
-        else if (percent >= 50) grade = 'D';
+        let gradeColor = '#c44536';
+        if (percent >= 90) { grade = 'A+'; gradeColor = '#ffd700'; }
+        else if (percent >= 80) { grade = 'A'; gradeColor = '#4a7c59'; }
+        else if (percent >= 70) { grade = 'B'; gradeColor = '#4a6fa5'; }
+        else if (percent >= 60) { grade = 'C'; gradeColor = '#c49464'; }
+        else if (percent >= 50) { grade = 'D'; gradeColor = '#a67c52'; }
 
-        const gradeText = this.add.text(W/2, y + 50, `Grade: ${grade}`, {
-            fontFamily: '"Press Start 2P"', fontSize: '16px', color: '#ffd700'
+        const gradeLabel = this.add.text(W/2, 365, 'GRADE', {
+            fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#8b7355'
         }).setOrigin(0.5);
+        gradContainer.add(gradeLabel);
+
+        const gradeText = this.add.text(W/2, 395, grade, {
+            fontFamily: '"Press Start 2P"', fontSize: '32px', color: gradeColor
+        }).setOrigin(0.5).setScale(0);
         gradContainer.add(gradeText);
 
-        const hint = this.add.text(W/2, H - 40, 'Press SPACE to return to menu', {
-            fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#8b7355'
+        this.tweens.add({
+            targets: gradeText,
+            scale: 1,
+            duration: 400,
+            delay: 1800,
+            ease: 'Back.easeOut'
+        });
+
+        this.tweens.add({
+            targets: gradeText,
+            scale: 1.1,
+            duration: 600,
+            delay: 2300,
+            yoyo: true,
+            repeat: -1
+        });
+
+        const hint = this.add.text(W/2, H - 25, 'Press SPACE to return to menu', {
+            fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#6b5344'
         }).setOrigin(0.5);
         gradContainer.add(hint);
 
         this.tweens.add({
-            targets: hint, alpha: 0.3,
-            duration: 500, yoyo: true, repeat: -1
+            targets: hint,
+            alpha: 0.3,
+            duration: 500,
+            yoyo: true,
+            repeat: -1
         });
 
         this.input.keyboard.once('keydown-SPACE', () => {
@@ -1664,5 +1951,5 @@ new Phaser.Game({
     scene: [BootScene, MenuScene, GameScene]
 });
 
-console.log('%c SKILL ACADEMY', 'font-size:20px;font-weight:bold;color:#f5e6d3;background:#2c1810;padding:8px 16px;border-radius:4px');
-console.log('%cLearn Claude Agent Skills - Now with CHALLENGES!', 'font-size:12px;color:#c49464');
+console.log('%c SKILL ACADEMY v2', 'font-size:20px;font-weight:bold;color:#ffecd2;background:#4a3020;padding:8px 16px;border-radius:4px');
+console.log('%cJourney-inspired Edition', 'font-size:12px;color:#8b7560');
